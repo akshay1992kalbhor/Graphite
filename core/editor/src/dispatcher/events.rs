@@ -142,14 +142,30 @@ impl CanvasPosition {
 		let y_diff = other.y - self.y;
 		f64::sqrt(x_diff * x_diff + y_diff * y_diff)
 	}
-	pub fn rotate(&mut self, theta: f64) -> &mut Self {
+	pub fn rotate(&self, theta: f64) -> Self {
 		let cosine = theta.cos();
 		let sine = theta.sin();
-		log::info!("Before {},{}", self.x, self.y);
-		self.x = self.x * cosine - self.y * sine;
-		self.y = self.x * sine + self.y * cosine;
-		log::info!("After {},{}", self.x, self.y);
-		self
+		CanvasPosition {
+			x: self.x * cosine - self.y * sine,
+			y: self.x * sine + self.y * cosine,
+		}
+	}
+	pub fn to_viewport_position(&self, canvas_transform: &CanvasTransform) -> ViewportPosition {
+		let new = self.rotate(canvas_transform.rotation) - canvas_transform.location;
+		ViewportPosition {
+			x: (new.x / canvas_transform.scale) as u32,
+			y: (new.y / canvas_transform.scale) as u32,
+		}
+	}
+}
+impl std::ops::Sub for CanvasPosition {
+	type Output = Self;
+
+	fn sub(self, other: Self) -> Self::Output {
+		Self {
+			x: self.x - other.x,
+			y: self.y - other.y,
+		}
 	}
 }
 
@@ -164,7 +180,7 @@ pub struct CanvasTransform {
 impl Default for CanvasTransform {
 	fn default() -> Self {
 		Self {
-			location: CanvasPosition{x:100., y:100.},
+			location: CanvasPosition { x: 100., y: 100. },
 			scale: 1.,
 			rotation: 0.,
 		}
@@ -178,7 +194,7 @@ impl ViewportPosition {
 		f64::sqrt(x_diff * x_diff + y_diff * y_diff)
 	}
 	pub fn to_canvas_position(&self, canvas_transform: &CanvasTransform) -> CanvasPosition {
-		*CanvasPosition {
+		CanvasPosition {
 			x: self.x as f64 * canvas_transform.scale + canvas_transform.location.x,
 			y: self.y as f64 * canvas_transform.scale + canvas_transform.location.y,
 		}
