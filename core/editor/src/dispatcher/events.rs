@@ -121,6 +121,13 @@ impl Trace {
 	}
 }
 
+// From top left at -1,-1
+#[derive(Debug, Copy, Clone, Default, PartialEq)]
+pub struct CanvasPosition {
+	pub x: f64,
+	pub y: f64,
+}
+
 // origin is top left
 #[derive(Debug, Copy, Clone, Default, Eq, PartialEq)]
 pub struct ViewportPosition {
@@ -128,11 +135,54 @@ pub struct ViewportPosition {
 	pub y: u32,
 }
 
+// A position on the infinite canvas
+impl CanvasPosition {
+	pub fn distance(&self, other: &Self) -> f64 {
+		let x_diff = other.x - self.x;
+		let y_diff = other.y - self.y;
+		f64::sqrt(x_diff * x_diff + y_diff * y_diff)
+	}
+	pub fn rotate(&mut self, theta: f64) -> &mut Self {
+		let cosine = theta.cos();
+		let sine = theta.sin();
+		log::info!("Before {},{}", self.x, self.y);
+		self.x = self.x * cosine - self.y * sine;
+		self.y = self.x * sine + self.y * cosine;
+		log::info!("After {},{}", self.x, self.y);
+		self
+	}
+}
+
+// The location of the viewport (or anything else) in the canvas
+#[derive(Debug, Copy, Clone, PartialEq)]
+pub struct CanvasTransform {
+	pub location: CanvasPosition,
+	pub rotation: f64,
+	pub scale: f64,
+}
+
+impl Default for CanvasTransform {
+	fn default() -> Self {
+		Self {
+			location: CanvasPosition{x:100., y:100.},
+			scale: 1.,
+			rotation: 0.,
+		}
+	}
+}
+
 impl ViewportPosition {
 	pub fn distance(&self, other: &Self) -> f64 {
 		let x_diff = other.x as f64 - self.x as f64;
 		let y_diff = other.y as f64 - self.y as f64;
 		f64::sqrt(x_diff * x_diff + y_diff * y_diff)
+	}
+	pub fn to_canvas_position(&self, canvas_transform: &CanvasTransform) -> CanvasPosition {
+		*CanvasPosition {
+			x: self.x as f64 * canvas_transform.scale + canvas_transform.location.x,
+			y: self.y as f64 * canvas_transform.scale + canvas_transform.location.y,
+		}
+		.rotate(canvas_transform.rotation)
 	}
 }
 
