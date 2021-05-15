@@ -1,4 +1,4 @@
-use crate::events::{Event, ToolResponse};
+use crate::events::{Event, ToolResponse, CanvasTransform};
 use crate::tools::{Fsm, Tool};
 use crate::Document;
 use document_core::Operation;
@@ -12,10 +12,10 @@ pub struct Select {
 }
 
 impl Tool for Select {
-	fn handle_input(&mut self, event: &Event, document: &Document, tool_data: &DocumentToolData) -> (Vec<ToolResponse>, Vec<Operation>) {
+	fn handle_input(&mut self, event: &Event, document: &Document, tool_data: &DocumentToolData, canvas_transform: &CanvasTransform) -> (Vec<ToolResponse>, Vec<Operation>) {
 		let mut responses = Vec::new();
 		let mut operations = Vec::new();
-		self.fsm_state = self.fsm_state.transition(event, document, tool_data, &mut self.data, &mut responses, &mut operations);
+		self.fsm_state = self.fsm_state.transition(event, document, tool_data, &mut self.data, canvas_transform, &mut responses, &mut operations);
 
 		(responses, operations)
 	}
@@ -40,7 +40,7 @@ struct SelectToolData;
 impl Fsm for SelectToolFsmState {
 	type ToolData = SelectToolData;
 
-	fn transition(self, event: &Event, _document: &Document, _tool_data: &DocumentToolData, _data: &mut Self::ToolData, _responses: &mut Vec<ToolResponse>, _operations: &mut Vec<Operation>) -> Self {
+	fn transition(self, event: &Event, _document: &Document, _tool_data: &DocumentToolData, _data: &mut Self::ToolData, _canvas_transform: &CanvasTransform, _responses: &mut Vec<ToolResponse>, _operations: &mut Vec<Operation>) -> Self {
 		match (self, event) {
 			(SelectToolFsmState::Ready, Event::LmbDown(_mouse_state)) => SelectToolFsmState::LmbDown,
 

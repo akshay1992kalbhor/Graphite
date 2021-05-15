@@ -104,7 +104,7 @@ impl Dispatcher {
 			.tool_state
 			.tool_data
 			.active_tool()?
-			.handle_input(event, &editor_state.document, &editor_state.tool_state.document_tool_data);
+			.handle_input(event, &editor_state.document, &editor_state.tool_state.document_tool_data, &editor_state.canvas_transform);
 
 		let mut document_responses = self.dispatch_operations(&mut editor_state.document, operations);
 		//let changes = document_responses.drain_filter(|x| x == DocumentResponse::DocumentChanged);
