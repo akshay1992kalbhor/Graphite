@@ -98,7 +98,7 @@
 			</LayoutCol>
 			<LayoutCol :class="'viewport'">
 				<div class="canvas" @mousedown="canvasMouseDown" @mouseup="canvasMouseUp" @mousemove="canvasMouseMove">
-					<svg v-html="viewportSvg"></svg>
+					<svg :viewBox="viewportBox" v-html="viewportSvg"></svg>
 				</div>
 			</LayoutCol>
 		</LayoutRow>
@@ -326,7 +326,10 @@ export default defineComponent({
 	mounted() {
 		registerResponseHandler(ResponseType.UpdateCanvas, (responseData: Response) => {
 			const updateData = responseData as UpdateCanvas;
-			if (updateData) this.viewportSvg = updateData.document;
+			if (updateData) {
+				this.viewportSvg = updateData.document;
+				this.viewportBox = "0 0 300 300";
+			}
 		});
 		registerResponseHandler(ResponseType.SetActiveTool, (responseData: Response) => {
 			const toolData = responseData as SetActiveTool;
@@ -342,6 +345,7 @@ export default defineComponent({
 	data() {
 		return {
 			viewportSvg: "",
+			viewportBox: "0 0 300 300",
 			activeTool: "Select",
 		};
 	},
