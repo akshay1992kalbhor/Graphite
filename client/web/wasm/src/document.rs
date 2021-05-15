@@ -56,6 +56,15 @@ pub fn select_tool(tool: String) -> Result<(), JsValue> {
 // TODO: When a mouse button is down that started in the viewport, this should trigger even when the mouse is outside the viewport (or even the browser window if the browser supports it)
 /// Mouse movement within the screenspace bounds of the viewport
 #[wasm_bindgen]
+pub fn on_canvas_resize(x: u32, y: u32) -> Result<(), JsValue> {
+	// TODO: Convert these screenspace viewport coordinates to canvas coordinates based on the current zoom and pan
+	let ev = events::Event::CanvasResize(events::CanvasSize { x, y });
+	EDITOR_STATE.with(|editor| editor.borrow_mut().handle_event(ev)).map_err(convert_error)
+}
+
+// TODO: When a mouse button is down that started in the viewport, this should trigger even when the mouse is outside the viewport (or even the browser window if the browser supports it)
+/// Mouse movement within the screenspace bounds of the viewport
+#[wasm_bindgen]
 pub fn on_mouse_move(x: u32, y: u32) -> Result<(), JsValue> {
 	// TODO: Convert these screenspace viewport coordinates to canvas coordinates based on the current zoom and pan
 	let ev = events::Event::MouseMove(events::ViewportPosition { x, y });

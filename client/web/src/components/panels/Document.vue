@@ -97,7 +97,7 @@
 				</div>
 			</LayoutCol>
 			<LayoutCol :class="'viewport'">
-				<div class="canvas" @mousedown="canvasMouseDown" @mouseup="canvasMouseUp" @mousemove="canvasMouseMove">
+				<div class="canvas" ref="canvas" @mousedown="canvasMouseDown" @mouseup="canvasMouseUp" @mousemove="canvasMouseMove">
 					<svg :viewBox="viewportBox" v-html="viewportSvg"></svg>
 				</div>
 			</LayoutCol>
@@ -288,6 +288,11 @@ export default defineComponent({
 		ViewModePixels,
 	},
 	methods: {
+		async canvasResize() {
+			const { on_canvas_resize } = await wasm;
+			const canvas = this.$refs.canvas as HTMLDivElement;
+			on_canvas_resize(canvas.clientWidth, canvas.clientHeight);
+		},
 		async canvasMouseDown(e: MouseEvent) {
 			const { on_mouse_down } = await wasm;
 			on_mouse_down(e.offsetX, e.offsetY, e.buttons);
@@ -338,6 +343,7 @@ export default defineComponent({
 
 		window.addEventListener("keyup", (e: KeyboardEvent) => this.keyUp(e));
 		window.addEventListener("keydown", (e: KeyboardEvent) => this.keyDown(e));
+		window.addEventListener("resize", () => this.canvasResize());
 
 		// TODO: Implement an actual UI for chosing colors (this is completely temporary)
 		this.updatePrimaryColor({ r: 247 / 255, g: 76 / 255, b: 0 / 255, a: 0.6 });
