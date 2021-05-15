@@ -58,7 +58,7 @@ pub fn select_tool(tool: String) -> Result<(), JsValue> {
 #[wasm_bindgen]
 pub fn on_canvas_resize(x: u32, y: u32) -> Result<(), JsValue> {
 	// TODO: Convert these screenspace viewport coordinates to canvas coordinates based on the current zoom and pan
-	let ev = events::Event::CanvasResize(events::CanvasSize { x, y });
+	let ev = events::Event::CanvasResize(events::ViewportSize { x, y });
 	EDITOR_STATE.with(|editor| editor.borrow_mut().handle_event(ev)).map_err(convert_error)
 }
 

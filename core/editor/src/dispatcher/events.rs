@@ -35,7 +35,7 @@ pub enum Event {
 	LmbUp(MouseState),
 	RmbUp(MouseState),
 	MmbUp(MouseState),
-	CanvasResize(CanvasSize),
+	CanvasResize(ViewportSize),
 	MouseMove(ViewportPosition),
 	KeyUp(Key),
 	KeyDown(Key),
@@ -137,7 +137,7 @@ pub struct ViewportPosition {
 }
 
 #[derive(Debug, Copy, Clone, Default, Eq, PartialEq)]
-pub struct CanvasSize {
+pub struct ViewportSize {
 	pub x: u32,
 	pub y: u32,
 }
@@ -179,7 +179,7 @@ impl std::ops::Sub for CanvasPosition {
 // The location of the viewport (or anything else) in the canvas
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct CanvasTransform {
-	pub canvas_size: CanvasSize,
+	pub viewport_size: ViewportSize,
 	pub location: CanvasPosition,
 	pub rotation: f64,
 	pub scale: f64,
@@ -188,7 +188,7 @@ pub struct CanvasTransform {
 impl Default for CanvasTransform {
 	fn default() -> Self {
 		Self {
-			canvas_size: CanvasSize::default(),
+			viewport_size: ViewportSize::default(),
 			location: CanvasPosition { x: 100., y: 100. },
 			scale: 1.,
 			rotation: 0.,

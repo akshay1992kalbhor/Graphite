@@ -33,8 +33,8 @@ impl Dispatcher {
 			Event::LmbDown(mouse_state) | Event::RmbDown(mouse_state) | Event::MmbDown(mouse_state) | Event::LmbUp(mouse_state) | Event::RmbUp(mouse_state) | Event::MmbUp(mouse_state) => {
 				editor_state.tool_state.document_tool_data.mouse_state = *mouse_state;
 			}
-			Event::CanvasResize(canvas_size) => {
-				editor_state.canvas_transform.canvas_size = *canvas_size;
+			Event::CanvasResize(viewport_size) => {
+				editor_state.canvas_transform.viewport_size = *viewport_size;
 			}
 			Event::MouseMove(pos) => {
 				editor_state.tool_state.document_tool_data.mouse_state.position = *pos;
