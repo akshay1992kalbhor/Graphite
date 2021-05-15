@@ -328,7 +328,7 @@ export default defineComponent({
 			const updateData = responseData as UpdateCanvas;
 			if (updateData) {
 				this.viewportSvg = updateData.document;
-				this.viewportBox = "0 0 300 300";
+				this.viewportBox = "0 0 700 700";
 			}
 		});
 		registerResponseHandler(ResponseType.SetActiveTool, (responseData: Response) => {
@@ -345,7 +345,7 @@ export default defineComponent({
 	data() {
 		return {
 			viewportSvg: "",
-			viewportBox: "0 0 300 300",
+			viewportBox: "0 0 700 700",
 			activeTool: "Select",
 		};
 	},
