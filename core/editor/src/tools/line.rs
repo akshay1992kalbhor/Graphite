@@ -79,7 +79,7 @@ impl Fsm for LineToolFsmState {
 				data.drag_current = *mouse_state;
 
 				operations.push(Operation::ClearWorkingFolder);
-				operations.push(make_operation(data, tool_data));
+				operations.push(make_operation(data, tool_data, canvas_transform));
 
 				LineToolFsmState::LmbDown
 			}
@@ -89,7 +89,7 @@ impl Fsm for LineToolFsmState {
 				operations.push(Operation::ClearWorkingFolder);
 				// TODO - introduce comparison threshold when operating with canvas coordinates (https://github.com/GraphiteEditor/Graphite/issues/100)
 				if data.drag_start != data.drag_current {
-					operations.push(make_operation(data, tool_data));
+					operations.push(make_operation(data, tool_data, canvas_transform));
 					operations.push(Operation::CommitTransaction);
 				}
 
@@ -106,7 +106,7 @@ impl Fsm for LineToolFsmState {
 
 				if state == LineToolFsmState::LmbDown {
 					operations.push(Operation::ClearWorkingFolder);
-					operations.push(make_operation(data, tool_data));
+					operations.push(make_operation(data, tool_data, canvas_transform));
 				}
 
 				self
@@ -116,7 +116,7 @@ impl Fsm for LineToolFsmState {
 
 				if state == LineToolFsmState::LmbDown {
 					operations.push(Operation::ClearWorkingFolder);
-					operations.push(make_operation(data, tool_data));
+					operations.push(make_operation(data, tool_data, canvas_transform));
 				}
 
 				self
@@ -126,7 +126,7 @@ impl Fsm for LineToolFsmState {
 
 				if state == LineToolFsmState::LmbDown {
 					operations.push(Operation::ClearWorkingFolder);
-					operations.push(make_operation(data, tool_data));
+					operations.push(make_operation(data, tool_data, canvas_transform));
 				}
 
 				self
@@ -136,7 +136,7 @@ impl Fsm for LineToolFsmState {
 
 				if state == LineToolFsmState::LmbDown {
 					operations.push(Operation::ClearWorkingFolder);
-					operations.push(make_operation(data, tool_data));
+					operations.push(make_operation(data, tool_data, canvas_transform));
 				}
 
 				self
@@ -146,7 +146,7 @@ impl Fsm for LineToolFsmState {
 
 				if state == LineToolFsmState::LmbDown {
 					operations.push(Operation::ClearWorkingFolder);
-					operations.push(make_operation(data, tool_data));
+					operations.push(make_operation(data, tool_data, canvas_transform));
 				}
 
 				self
@@ -156,7 +156,7 @@ impl Fsm for LineToolFsmState {
 
 				if state == LineToolFsmState::LmbDown {
 					operations.push(Operation::ClearWorkingFolder);
-					operations.push(make_operation(data, tool_data));
+					operations.push(make_operation(data, tool_data, canvas_transform));
 				}
 
 				self
@@ -166,11 +166,13 @@ impl Fsm for LineToolFsmState {
 	}
 }
 
-fn make_operation(data: &mut LineToolData, tool_data: &DocumentToolData) -> Operation {
-	let x0 = data.drag_start.x as f64;
-	let y0 = data.drag_start.y as f64;
-	let x1 = data.drag_current.x as f64;
-	let y1 = data.drag_current.y as f64;
+fn make_operation(data: &mut LineToolData, tool_data: &DocumentToolData, canvas_transform: &CanvasTransform) -> Operation {
+	let canvas_start = data.drag_start.to_canvas_position(canvas_transform);
+	let canvas_end = data.drag_current.to_canvas_position(canvas_transform);
+	let x0 = canvas_start.x;
+	let y0 = canvas_start.y;
+	let x1 = canvas_end.x;
+	let y1 = canvas_end.y;
 
 	let (dx, dy) = (x1 - x0, y1 - y0);
 	let mut angle = f64::atan2(dx, dy);

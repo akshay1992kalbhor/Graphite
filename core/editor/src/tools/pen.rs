@@ -1,4 +1,4 @@
-use crate::events::{CanvasTransform, Key, ViewportPosition};
+use crate::events::{CanvasTransform, Key, CanvasPosition};
 use crate::events::{Event, ToolResponse};
 use crate::tools::{Fsm, Tool};
 use crate::Document;
@@ -37,8 +37,8 @@ impl Default for PenToolFsmState {
 }
 #[derive(Clone, Debug, Default)]
 struct PenToolData {
-	points: Vec<ViewportPosition>,
-	next_point: ViewportPosition,
+	points: Vec<CanvasPosition>,
+	next_point: CanvasPosition,
 }
 
 impl Fsm for PenToolFsmState {
@@ -58,8 +58,9 @@ impl Fsm for PenToolFsmState {
 			(PenToolFsmState::Ready, Event::LmbDown(mouse_state)) => {
 				operations.push(Operation::MountWorkingFolder { path: vec![] });
 
-				data.points.push(mouse_state.position);
-				data.next_point = mouse_state.position;
+				let canvas_position =  mouse_state.position.to_canvas_position(canvas_transform);
+				data.points.push(canvas_position);
+				data.next_point = canvas_position;
 
 				PenToolFsmState::LmbDown
 			}
@@ -71,16 +72,17 @@ impl Fsm for PenToolFsmState {
 				PenToolFsmState::Ready
 			}
 			(PenToolFsmState::LmbDown, Event::LmbUp(mouse_state)) => {
+				let canvas_position =  mouse_state.position.to_canvas_position(canvas_transform);
 				// TODO - introduce comparison threshold when operating with canvas coordinates (https://github.com/GraphiteEditor/Graphite/issues/100)
-				if data.points.last() != Some(&mouse_state.position) {
-					data.points.push(mouse_state.position);
-					data.next_point = mouse_state.position;
+				if data.points.last() != Some(&canvas_position) {
+					data.points.push(canvas_position);
+					data.next_point = canvas_position;
 				}
 
 				PenToolFsmState::LmbDown
 			}
 			(PenToolFsmState::LmbDown, Event::MouseMove(mouse_state)) => {
-				data.next_point = *mouse_state;
+				data.next_point = mouse_state.to_canvas_position(canvas_transform);
 
 				operations.push(Operation::ClearWorkingFolder);
 				operations.push(make_operation(data, tool_data, true));
