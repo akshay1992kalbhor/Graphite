@@ -1,4 +1,4 @@
-use crate::events::{Event, ToolResponse, CanvasTransform};
+use crate::events::{CanvasTransform, Event, ToolResponse};
 use crate::tools::Tool;
 use crate::Document;
 use document_core::Operation;

@@ -1,5 +1,5 @@
+use crate::events::{CanvasTransform, Key, ViewportPosition};
 use crate::events::{Event, ToolResponse};
-use crate::events::{Key, ViewportPosition, CanvasTransform};
 use crate::tools::{Fsm, Tool};
 use crate::Document;
 use document_core::layers::style;
@@ -46,7 +46,16 @@ struct ShapeToolData {
 impl Fsm for ShapeToolFsmState {
 	type ToolData = ShapeToolData;
 
-	fn transition(self, event: &Event, document: &Document, tool_data: &DocumentToolData, data: &mut Self::ToolData, canvas_transform: &CanvasTransform, _responses: &mut Vec<ToolResponse>, operations: &mut Vec<Operation>) -> Self {
+	fn transition(
+		self,
+		event: &Event,
+		document: &Document,
+		tool_data: &DocumentToolData,
+		data: &mut Self::ToolData,
+		canvas_transform: &CanvasTransform,
+		_responses: &mut Vec<ToolResponse>,
+		operations: &mut Vec<Operation>,
+	) -> Self {
 		match (self, event) {
 			(ShapeToolFsmState::Ready, Event::LmbDown(mouse_state)) => {
 				data.drag_start = mouse_state.position;

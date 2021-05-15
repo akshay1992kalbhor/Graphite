@@ -1,4 +1,4 @@
-use crate::events::{Event, ToolResponse, CanvasTransform};
+use crate::events::{CanvasTransform, Event, ToolResponse};
 use crate::tools::{Fsm, Tool};
 use crate::Document;
 use document_core::Operation;
@@ -40,7 +40,16 @@ struct SelectToolData;
 impl Fsm for SelectToolFsmState {
 	type ToolData = SelectToolData;
 
-	fn transition(self, event: &Event, _document: &Document, _tool_data: &DocumentToolData, _data: &mut Self::ToolData, _canvas_transform: &CanvasTransform, _responses: &mut Vec<ToolResponse>, _operations: &mut Vec<Operation>) -> Self {
+	fn transition(
+		self,
+		event: &Event,
+		_document: &Document,
+		_tool_data: &DocumentToolData,
+		_data: &mut Self::ToolData,
+		_canvas_transform: &CanvasTransform,
+		_responses: &mut Vec<ToolResponse>,
+		_operations: &mut Vec<Operation>,
+	) -> Self {
 		match (self, event) {
 			(SelectToolFsmState::Ready, Event::LmbDown(_mouse_state)) => SelectToolFsmState::LmbDown,
 

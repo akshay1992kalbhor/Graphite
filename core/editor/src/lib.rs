@@ -25,7 +25,7 @@ pub use dispatcher::events;
 #[doc(inline)]
 pub use dispatcher::Callback;
 
-use dispatcher::{Dispatcher, events::CanvasTransform};
+use dispatcher::{events::CanvasTransform, Dispatcher};
 use document_core::document::Document;
 use tools::ToolFsmState;
 use workspace::Workspace;
